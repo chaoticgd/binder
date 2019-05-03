@@ -7,9 +7,9 @@ The following operators are supported:
 
 | Operator | Description                                                |
 | -------- | ---------------------------------------------------------- |
-| xor      | Returns a list of all bytes that differ between two files. |
-| and      | Takes two diff lists and finds the intersect.              |
-| or       | Takes two diff lists and finds the union.                  |
+| xor (^)  | Returns a list of all bytes that differ between two files. |
+| and (.)  | Takes two diff lists and finds the intersect.              |
+| or (+)   | Takes two diff lists and finds the union.                  |
 
 For example, the following command can be used to find the bytes that differ between three different binary files:
 
