@@ -41,6 +41,13 @@ int main(int argc, char** argv) {
 	std::vector<std::string> args = parse_args(argc, argv);
 	auto files = open_files(args);
 
+	std::cout << "        ";
+	for(auto& file : files) {
+		std::cout << std::setw(file.first.size() + 1);
+		std::cout << file.first;
+	}
+	std::cout << "\n";
+
 	buffer_map buffers;
 	for(std::size_t i = 0;; i++) {
 		bool reached_end = false;
@@ -69,20 +76,13 @@ int main(int argc, char** argv) {
 			std::exit(1);
 		}
 
-		std::cout << "        ";
-		for(auto& buffer : buffers) {
-			std::cout << std::setw(buffer.first.size() + 1);
-			std::cout << buffer.first;
-		}
-		std::cout << "\n";
-
 		for(std::size_t offset : differences.offsets) {
 			std::size_t absolute_offset = i * BUFFER_SIZE + offset;
 			std::cout << std::hex << std::setfill('0') << std::setw(8);
 			std::cout << absolute_offset << " ";
 			for(auto& buffer : buffers) {
 				std::cout << std::setfill(' ') << std::setw(buffer.first.size());
-				std::cout << (int) buffer.second[offset] << " ";
+				std::cout << (int) (buffer.second[offset] & 0xff) << " ";
 			}
 			std::cout << "\n";
 		}
