@@ -11,7 +11,7 @@
 static const std::size_t BUFFER_SIZE = 1024 * 1024;
 
 enum token_type {
-	XOR, AND, OR, OPEN_BRACKET, CLOSE_BRACKET, FILE_NAME
+	XOR, AND, OR, SUBTRACT, OPEN_BRACKET, CLOSE_BRACKET, FILE_NAME
 };
 
 struct diff_table {
@@ -23,6 +23,7 @@ static const std::map<std::string, token_type> token_table = {
 	{ "^", XOR           },
 	{ ".", AND,          },
 	{ "+", OR,           },
+	{ "-", SUBTRACT      },
 	{ "{", OPEN_BRACKET  },
 	{ "}", CLOSE_BRACKET }
 };
@@ -120,6 +121,11 @@ bool orOp(const diff_table& lhs, const diff_table& rhs, std::size_t i) {
 	       rhs.offsets.find(i) != rhs.offsets.end();
 }
 
+bool subtractOp(const diff_table& lhs, const diff_table& rhs, std::size_t i) {
+	return lhs.offsets.find(i) != lhs.offsets.end() &&
+	       rhs.offsets.find(i) == rhs.offsets.end();
+}
+
 diff_table find_difference(token_iterator& expression, buffer_map& buffers) {
 
 	auto parse_sub_expression = [](token_iterator& expression, buffer_map& buffers) {
@@ -141,9 +147,10 @@ diff_table find_difference(token_iterator& expression, buffer_map& buffers) {
 	auto rhs = parse_sub_expression(expression, buffers);
 
 	switch(op) {
-		case XOR: return apply_operation(lhs, rhs, xorOp);
-		case AND: return apply_operation(lhs, rhs, andOp);
-		case OR:  return apply_operation(lhs, rhs, orOp);
+		case XOR:      return apply_operation(lhs, rhs, xorOp);
+		case AND:      return apply_operation(lhs, rhs, andOp);
+		case OR:       return apply_operation(lhs, rhs, orOp);
+		case SUBTRACT: return apply_operation(lhs, rhs, subtractOp);
 	}
 	throw std::runtime_error("Expected operator");
 }
